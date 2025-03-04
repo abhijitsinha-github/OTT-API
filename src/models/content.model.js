@@ -63,17 +63,25 @@ const contentSchema = new mongoose.Schema(
 
 // MIDDLEWARES
 contentSchema.pre("save", function (next) {
-  this.genre = this.genre[0].split(",");
-  this.genre = this.genre.map((str) => str.toLowerCase());
-  this.cast = this.cast[0].split(",");
+  if (this.isModified("genre")) {
+    this.genre = this.genre[0].split(",");
+    this.genre = this.genre.map((str) => str.toLowerCase());
+  }
+  if (this.isModified("cast")) {
+    this.cast = this.cast[0].split(",");
+  }
 
   next();
 });
 
 contentSchema.post("findOneAndUpdate", function (doc, next) {
-  doc.title = doc.title.toLowerCase();
-  doc.type = doc.type.toLowerCase();
-  doc.genre = doc.genre.map((str) => str.toLowerCase());
+  if (doc.genre) {
+    doc.genre = doc.genre[0].split(",");
+    doc.genre = doc.genre.map((str) => str.toLowerCase());
+  }
+  if (doc.cast) {
+    doc.cast = doc.cast[0].split(",");
+  }
   next();
 });
 

@@ -54,6 +54,14 @@ const contentFile = (req, res, next) => {
     if (error) {
       return next(error);
     }
+    if (req.files) {
+      if (req.files.thumbnail) {
+        req.body.thumbnail = req.files.thumbnail[0].path;
+      }
+      if (req.files.trailer) {
+        req.body.trailer = req.files.trailer[0].path;
+      }
+    }
     next();
   });
 };

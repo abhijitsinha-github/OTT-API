@@ -14,22 +14,19 @@ const prodErr = (error, res) => {
 
 // ERROR FORMATTER FOR UNKNOWN ERRORS
 const formatErr = (error, res) => {
-  // CHECKING NODE ENV [PRODUCTION/DEVELOPMENT]
-  if (process.env.NODE_ENV === "production") {
-    // MONGOOSE INVALID INPUT ERROR
-    if (error.name === "CastError") {
-      const msg = `Invalid input for ${error.path}: ${error.value}`;
-      return new ApiError(msg, null, 400);
-    }
+  // MONGOOSE INVALID INPUT ERROR
+  if (error.name === "CastError") {
+    const msg = `Invalid input for ${error.path}: ${error.value}`;
+    return new ApiError(msg, null, 400);
+  }
 
-    // MONGOOSE DUPLICATE ERROR
-    if (error.code == 11000) {
-      const msg = `${Object.keys(error.keyValue)}: ${Object.values(
-        error.keyValue
-      )} already exist!`;
+  // MONGOOSE DUPLICATE ERROR
+  if (error.code == 11000) {
+    const msg = `${Object.keys(error.keyValue)}: ${Object.values(
+      error.keyValue
+    )} already exist!`;
 
-      return new ApiError(msg, null, 409);
-    }
+    return new ApiError(msg, null, 409);
   }
 
   // MONGOOSE VALIDATION ERROR
@@ -49,13 +46,19 @@ const formatErr = (error, res) => {
     return new ApiError(msg, null, 400);
   }
 
+  // JWT EXPIRED
+  if (error.name === "TokenExpiredError") {
+    return new ApiError("JWT expired. Please login again", null, 401);
+  }
+
+  return res.status(500).json(error);
   // GENERIC ERROR RESPONSE
-  return res.status(error.statusCode).json({
-    status: error.status,
-    status_code: error.statusCode,
-    message: "Something went wrong. Please try again later",
-    data: error.data,
-  });
+  // return res.status(error.statusCode).json({
+  //   status: error.status,
+  //   status_code: error.statusCode,
+  //   message: "Something went wrong. Please try again later",
+  //   data: error.data,
+  // });
 };
 
 // GLOBAL ERROR HANDLER

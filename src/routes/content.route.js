@@ -13,17 +13,18 @@ import {
 
 // MIDDLEWARES
 import { contentFile } from "../middlewares/multer.middleware.js";
-import { fileHandler, isValidID } from "../middlewares/content.middleware.js";
+import { isValidID } from "../middlewares/content.middleware.js";
+import { validateUser } from "../middlewares/validateUser.js";
 
 router
   .route("/")
-  .post(contentFile, fileHandler, createContent)
-  .get(getAllContents);
+  .post(validateUser, contentFile, createContent)
+  .get(validateUser, getAllContents);
 
 router
   .route("/:id")
-  .get(isValidID, getContent)
-  .put(isValidID, contentFile, fileHandler, updateContent)
+  .get(validateUser, isValidID, getContent)
+  .put(validateUser, isValidID, contentFile, updateContent)
   .delete(deleteContent);
 
 export default router;

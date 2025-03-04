@@ -10,7 +10,6 @@ const createContent = asyncHandler(async (req, res, next) => {
   const content = await Content.create(req.body);
 
   const response = new ApiResponse(`Data Saved Successfully`, content, 201);
-
   sendRes(response, res);
 });
 
@@ -47,10 +46,13 @@ const updateContent = asyncHandler(async (req, res, next) => {
     runValidators: true,
   });
 
-  if (req.content) {
+  if (req.files.thumbnail) {
     if (fs.existsSync(req.content.thumbnail)) {
       fs.unlinkSync(req.content.thumbnail);
     }
+  }
+
+  if (req.files.trailer) {
     if (fs.existsSync(req.content.trailer)) {
       fs.unlinkSync(req.content.trailer);
     }
